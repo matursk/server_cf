@@ -1,0 +1,14 @@
+{
+  "name": "matur-api",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-18",
+  "routes": [
+    { "pattern": "api.matur.sk/v3/*", "custom_domain": true }
+  ],
+  "vars": {
+    "STRIPE_SUCCESS_URL": "https://api.matur.sk/v3/success",
+    "STRIPE_CANCEL_URL": "https://api.matur.sk/v3/cancel",
+    "FIREBASE_PROJECT_ID": "matur-3f6cc"
+  }
+}
+
