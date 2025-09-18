@@ -2,7 +2,7 @@
 
 This Worker serves Stripe Checkout + Webhook and sets Firestore `users/{uid}.premium = true` on successful payment.
 
-## Endpoints (under `https://api.matur.sk/v3/`)
+## Endpoints (under `https://api.matur.sk/`)
 - `POST /stripe/checkout-session` → creates a Stripe Checkout Session (one-time, allows promo codes, collects email)
 - `POST /stripe/webhook` → verifies Stripe signature; on `checkout.session.completed`, unlocks premium
 - `GET /success` and `GET /cancel` → simple confirmation pages
@@ -20,8 +20,8 @@ npx wrangler secret put FIREBASE_SA_EMAIL
 npx wrangler secret put FIREBASE_SA_KEY   # full PEM contents
 
 # Optional (already set in wrangler.jsonc, can override if needed)
-npx wrangler secret put STRIPE_SUCCESS_URL
-npx wrangler secret put STRIPE_CANCEL_URL
+npx wrangler secret put STRIPE_SUCCESS_URL  # https://api.matur.sk/success
+npx wrangler secret put STRIPE_CANCEL_URL   # https://api.matur.sk/cancel
 npx wrangler secret put FIREBASE_PROJECT_ID
 
 # Deploy
@@ -33,13 +33,13 @@ Ensure your domain route is configured in `wrangler.jsonc`:
 ```jsonc
 {
   "routes": [
-    { "pattern": "api.matur.sk/v3/*", "custom_domain": true }
+    { "pattern": "api.matur.sk/*" }
   ]
 }
 ```
 
 ## Stripe Dashboard
-- Webhook: `https://api.matur.sk/v3/stripe/webhook`
+- Webhook: `https://api.matur.sk/stripe/webhook`
 - Events: `checkout.session.completed`
 - Branding: logo + color `#DEEFF6`
 - Test card: `4242 4242 4242 4242`

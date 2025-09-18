@@ -6,8 +6,8 @@
     { "pattern": "api.matur.sk/*" }
   ],
   "vars": {
-    "STRIPE_SUCCESS_URL": "https://api.matur.sk/v3/success",
-    "STRIPE_CANCEL_URL": "https://api.matur.sk/v3/cancel",
+    "STRIPE_SUCCESS_URL": "https://api.matur.sk/success",
+    "STRIPE_CANCEL_URL": "https://api.matur.sk/cancel",
     "FIREBASE_PROJECT_ID": "matur-3f6cc"
   }
 }

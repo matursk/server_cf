@@ -1,27 +1,21 @@
 // Cloudflare Worker for Stripe Checkout + Webhook and Firestore unlock (premium=true)
-// Endpoints under /v3/
-
-const ROUTE_PREFIX = "/v3";
+// Endpoints at root
 
 export default {
   async fetch(request, env, ctx) {
     try {
       const url = new URL(request.url);
       const path = url.pathname;
-      if (!path.startsWith(ROUTE_PREFIX)) {
-        return new Response("Not Found", { status: 404 });
-      }
-
       // Simple success/cancel pages
-      if (path === `${ROUTE_PREFIX}/success` && request.method === "GET") {
+      if (path === `/success` && request.method === "GET") {
         return htmlPage("Platba úspešná", "Môžete sa vrátiť do aplikácie. Ďakujeme.");
       }
-      if (path === `${ROUTE_PREFIX}/cancel` && request.method === "GET") {
+      if (path === `/cancel` && request.method === "GET") {
         return htmlPage("Platba zrušená", "Platbu ste zrušili. Skúste to neskôr.");
       }
 
       // Create Stripe Checkout Session
-      if (path === `${ROUTE_PREFIX}/stripe/checkout-session` && request.method === "POST") {
+      if (path === `/stripe/checkout-session` && request.method === "POST") {
         const body = await safeJson(request);
         const uid = body.uid;
         const email = body.email || "";
@@ -34,8 +28,8 @@ export default {
         params.append("line_items[0][quantity]", "1");
         params.set("allow_promotion_codes", "true");
         if (email) params.set("customer_email", email);
-        params.set("success_url", env.STRIPE_SUCCESS_URL || `${url.origin}${ROUTE_PREFIX}/success?session_id={CHECKOUT_SESSION_ID}`);
-        params.set("cancel_url", env.STRIPE_CANCEL_URL || `${url.origin}${ROUTE_PREFIX}/cancel`);
+        params.set("success_url", env.STRIPE_SUCCESS_URL || `${url.origin}/success?session_id={CHECKOUT_SESSION_ID}`);
+        params.set("cancel_url", env.STRIPE_CANCEL_URL || `${url.origin}/cancel`);
         params.set("metadata[uid]", uid);
 
         const stripeResp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
@@ -52,7 +46,7 @@ export default {
       }
 
       // Stripe Webhook (checkout.session.completed)
-      if (path === `${ROUTE_PREFIX}/stripe/webhook` && request.method === "POST") {
+      if (path === `/stripe/webhook` && request.method === "POST") {
         const payload = await request.text();
         const sig = request.headers.get("stripe-signature") || request.headers.get("Stripe-Signature");
         if (!sig) return json({ error: "missing signature" }, 400);
